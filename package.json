@@ -3,9 +3,16 @@
   "version": "0.0.1",
   "description": "for sharpening the tools",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Daniel Haarhoff",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.3",
+    "@types/node": "^14.14.20"
+  },
+  "dependencies": {},
+  "scripts": {
+    "start": "ts-node-dev --watch data ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
