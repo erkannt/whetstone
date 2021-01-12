@@ -1,0 +1,11 @@
+{
+  "name": "whetstone",
+  "version": "0.0.1",
+  "description": "for sharpening the tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Haarhoff",
+  "license": "MIT"
+}
