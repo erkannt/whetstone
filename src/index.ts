@@ -1,7 +1,13 @@
-import { createServer, IncomingMessage, ServerResponse } from 'http';
+import Koa from 'koa';
 
-const server = createServer((request: IncomingMessage, response: ServerResponse) => {
-    response.end('Hello world!');
-});
+const mainContent = `
+    <h1>Whetstone</h1>
+    <a href="/login">Login<a>
+`;
+const app = new Koa()
 
-server.listen(8080);
+app.use(async context => {
+    context.body = mainContent;
+})
+
+app.listen(8080);
