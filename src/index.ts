@@ -21,7 +21,7 @@ koaPassport
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? 'my-secret',
       callbackURL: "http://localhost:8080/auth/github/callback"
     },
-    (_accessToken: any, _refreshToken: any, profile: any, done: any) => { return done(null, profile) }
+    (_accessToken: any, _refreshToken: any, profile: any, done: any) => { return done(null, profile.id) }
     )
   );
 

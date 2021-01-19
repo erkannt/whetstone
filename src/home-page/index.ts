@@ -12,13 +12,14 @@ const renderLogin = (user: O.Option<string>): string => (
     )
 )
 
-export const homepage = (_: MyContext): string => (
+export const homepage = (ctx: MyContext): string => (
     pipe(
-        O.none,
+        O.fromNullable(ctx.state.user),
         renderLogin,
         (body) => `
             <h1>Whetstone</h1>
             ${body}
+            ${JSON.stringify(ctx.state.user, null, 2)}
             `
     )
 )
