@@ -30,7 +30,7 @@
   "scripts": {
     "start": "ts-node-dev --watch src ./src/index.ts",
     "clean": "rm -r node_modules build",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
