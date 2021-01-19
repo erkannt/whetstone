@@ -7,17 +7,24 @@
   "license": "MIT",
   "devDependencies": {
     "@types/koa": "^2.11.6",
+    "@types/koa-passport": "^4.0.2",
+    "@types/koa-session": "^5.10.3",
     "@types/koa__router": "^8.0.3",
+    "@types/passport-github2": "^1.2.4",
     "ts-node-dev": "^1.1.1",
     "typescript": "^4.1.3"
   },
   "dependencies": {
     "@koa/router": "^10.0.0",
     "fp-ts": "^2.9.3",
-    "koa": "^2.13.1"
+    "koa": "^2.13.1",
+    "koa-passport": "^4.1.3",
+    "koa-session": "^6.1.0",
+    "passport-github2": "^0.1.12"
   },
   "scripts": {
     "start": "ts-node-dev --watch data ./src/index.ts",
+    "clean": "rm -r node_modules build",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
