@@ -22,10 +22,14 @@ type ViewModel = {
   username: string,
 }
 
-export const renderNavbar = (user: O.Option<string>): string => pipe(
+export type Navbar = {
+  user: O.Option<string>
+}
+
+export const renderNavbar = (model: Navbar): string => pipe(
   {
-    login: authLink(user),
-    username: currentUserDisplay(user),
+    login: authLink(model.user),
+    username: currentUserDisplay(model.user),
   },
   (c: ViewModel) => `
       <nav>
