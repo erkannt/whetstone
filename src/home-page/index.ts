@@ -1,6 +1,6 @@
-import { Context } from 'koa'
 import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/function'
+import { MyContext } from '../context'
 
 const renderLogin = (user: O.Option<string>): string => (
     pipe(
@@ -12,7 +12,7 @@ const renderLogin = (user: O.Option<string>): string => (
     )
 )
 
-export const homepage = (_: Context): string => (
+export const homepage = (_: MyContext): string => (
     pipe(
         O.none,
         renderLogin,

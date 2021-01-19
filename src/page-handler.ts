@@ -1,6 +1,7 @@
-import { Context, Middleware } from 'koa'
+import { Middleware } from 'koa'
+import { MyContext } from './context'
 
-type Page = (context: Context) => string
+type Page = (context: MyContext) => string
 
 export const pageHandler = (renderPage: Page): Middleware => (context) => {
     context.body = renderPage(context)

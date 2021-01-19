@@ -3,6 +3,9 @@ import { router } from './router';
 import koaSession from 'koa-session';
 import koaPassport from 'koa-passport';
 import {Strategy as GitHubStrategy} from 'passport-github2';
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 const app = new Koa()
 app.keys = ['something-secret']
@@ -16,7 +19,7 @@ koaPassport
     {
       clientID: process.env.GITHUB_CLIENT_ID ?? 'my-key',
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? 'my-secret',
-      callbackURL: "http://127.0.0.1:8080/auth/github/callback"
+      callbackURL: "http://localhost:8080/auth/github/callback"
     },
     (_accessToken: any, _refreshToken: any, profile: any, done: any) => { return done(null, profile) }
     )

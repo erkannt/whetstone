@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.0.0",
+    "dotenv": "^8.2.0",
     "fp-ts": "^2.9.3",
     "koa": "^2.13.1",
     "koa-passport": "^4.1.3",
@@ -23,7 +24,7 @@
     "passport-github2": "^0.1.12"
   },
   "scripts": {
-    "start": "ts-node-dev --watch data ./src/index.ts",
+    "start": "ts-node-dev --watch src ./src/index.ts",
     "clean": "rm -r node_modules build",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
