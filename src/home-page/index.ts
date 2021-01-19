@@ -1,7 +1,6 @@
 import * as O from 'fp-ts/lib/Option'
 import { constant, pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
-import { cons } from 'fp-ts/lib/ReadonlyArray'
 
 const renderNavbar = (user: O.Option<string>): string => {
   type ViewModel = {

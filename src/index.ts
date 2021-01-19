@@ -1,9 +1,9 @@
-import Koa from 'koa';
-import { router } from './router';
-import koaSession from 'koa-session';
-import koaPassport from 'koa-passport';
-import {Strategy as GitHubStrategy} from 'passport-github2';
-import dotenv from 'dotenv';
+import Koa from 'koa'
+import { router } from './router'
+import koaSession from 'koa-session'
+import koaPassport from 'koa-passport'
+import { Strategy as GitHubStrategy } from 'passport-github2'
+import dotenv from 'dotenv'
 
 dotenv.config()
 
@@ -19,11 +19,12 @@ koaPassport
     {
       clientID: process.env.GITHUB_CLIENT_ID ?? 'my-key',
       clientSecret: process.env.GITHUB_CLIENT_SECRET ?? 'my-secret',
-      callbackURL: "http://localhost:8080/auth/github/callback"
+      callbackURL: 'http://localhost:8080/auth/github/callback'
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_accessToken: any, _refreshToken: any, profile: any, done: any) => { return done(null, profile.id) }
-    )
-  );
+  )
+  )
 
 app
   .use(koaSession({}, app))
