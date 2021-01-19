@@ -17,7 +17,7 @@ const currentUserDisplay = (user: O.Option<string>): string => pipe(
   )
 )
 
-type ViewModel = {
+type Elements = {
   login: string,
   username: string,
 }
@@ -31,10 +31,10 @@ export const renderNavbar = (model: Navbar): string => pipe(
     login: authLink(model.user),
     username: currentUserDisplay(model.user),
   },
-  (c: ViewModel) => `
+  (e: Elements) => `
       <nav>
-        ${c.username}
-        ${c.login}
+        ${e.username}
+        ${e.login}
       </nav
         `
 )

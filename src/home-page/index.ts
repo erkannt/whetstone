@@ -9,7 +9,7 @@ const navbarModel = (ctx: MyContext): Navbar => (
   }
 )
 
-type ViewModel = {
+type Elements = {
   navbar: string
 }
 
@@ -18,9 +18,9 @@ export const homepage = (ctx: MyContext): string => (
     {
       navbar: pipe(ctx, navbarModel, renderNavbar)
     },
-    (vm: ViewModel) => `
+    (e: Elements) => `
       <h1>Whetstone</h1>
-      ${vm.navbar}
+      ${e.navbar}
       `
   )
 )
