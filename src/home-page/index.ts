@@ -9,7 +9,7 @@ const navbarModel = (ctx: MyContext): Navbar => (
   }
 )
 
-type Elements = {
+type Fragments = {
   navbar: string
 }
 
@@ -18,7 +18,7 @@ export const homepage = (ctx: MyContext): string => (
     {
       navbar: pipe(ctx, navbarModel, renderNavbar)
     },
-    (e: Elements) => `
+    (e: Fragments) => `
       <h1>Whetstone</h1>
       ${e.navbar}
       `
