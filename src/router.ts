@@ -18,7 +18,7 @@ export const router = (): Router<DefaultState, Context> => {
     async (context, next) => {
       context.logout()
       context.redirect('back')
-      await (next)
+      await next()
     }
   )
 
@@ -26,7 +26,7 @@ export const router = (): Router<DefaultState, Context> => {
     koaPassport.authenticate('github', {failureRedirect: '/login'}),
     async (context, next) => {
       context.redirect('/')
-      await next
+      await next()
     }
   )
 
