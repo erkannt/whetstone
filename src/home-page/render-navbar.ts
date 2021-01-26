@@ -33,7 +33,8 @@ export const renderNavbar = (model: Navbar): string => pipe(
   },
   (e: Fragments) => `
       <nav>
-        ${e.username}
+        <img src="https://avatars.githubusercontent.com/u/19282025?s=100">
+        erkannt
         ${e.login}
       </nav
         `

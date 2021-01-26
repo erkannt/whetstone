@@ -16,11 +16,11 @@ koaPassport
   .deserializeUser((obj: undefined, done) => done(null, obj))
 koaPassport
   .use(new GitHubStrategy(
-    {
-      clientID: process.env.GITHUB_CLIENT_ID ?? 'my-key',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET ?? 'my-secret',
-      callbackURL: 'http://localhost:8080/auth/github/callback'
-    },
+      {
+        clientID: process.env.GITHUB_CLIENT_ID ?? 'my-key',
+        clientSecret: process.env.GITHUB_CLIENT_SECRET ?? 'my-secret',
+        callbackURL: 'http://localhost:8080/auth/github/callback'
+      },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_accessToken: any, _refreshToken: any, profile: any, done: any) => { return done(null, profile.id) }
   )
