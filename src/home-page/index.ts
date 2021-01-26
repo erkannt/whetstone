@@ -1,26 +1,34 @@
 import * as O from 'fp-ts/lib/Option'
-import { pipe } from 'fp-ts/lib/function'
+import { constant, pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
-import { Navbar, renderNavbar } from './render-navbar'
 
-const navbarModel = (ctx: MyContext): Navbar => (
-  {
-    user: O.fromNullable(ctx.state.user)
-  }
+const loggedInUser = (ctx: MyContext): O.Option<string> => (
+  O.fromNullable(ctx.state.user)
 )
 
-type Fragments = {
-  navbar: string
+const renderLoginToggle = (user: O.Option<unknown>): string => pipe(
+  user,
+  O.fold(
+    constant('<a href="/login">Login<a>'),
+    constant('<a href="/logout">Logout<a>')
+  )
+)
+
+type Homepage = {
+  user: string
+  loginToggle: string
 }
 
 export const homepage = (ctx: MyContext): string => (
   pipe(
     {
-      navbar: pipe(ctx, navbarModel, renderNavbar)
+      user: 'erkannt',
+      loginToggle: pipe(ctx, loggedInUser, renderLoginToggle)
     },
-    (e: Fragments) => `
+    (e: Homepage) => `
       <h1>Whetstone</h1>
-      ${e.navbar}
+      ${e.user}
+      ${e.loginToggle}
       `
   )
 )
