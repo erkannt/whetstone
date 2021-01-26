@@ -1,4 +1,4 @@
-import * as O from 'fp-ts/lib/Option'
+import * as E from 'fp-ts/lib/Either'
 import { constant, pipe } from 'fp-ts/lib/function'
 
 type User = {
@@ -6,9 +6,9 @@ type User = {
   name: string,
 }
 
-export const renderUser = (user: O.Option<User>): string => pipe(
+export const renderUser = (user: E.Either<string, User>): string => pipe(
   user,
-  O.fold(
+  E.fold(
     constant(''),
     ((u) => (`
       <img src="https://avatars.githubusercontent.com/u/${u.id}?s=100">
