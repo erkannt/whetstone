@@ -2,27 +2,35 @@ import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
 import { renderLogin } from './render-login'
+import { renderUser } from './render-user'
 
-const loggedInUser = (ctx: MyContext): O.Option<string> => (
-  O.fromNullable(ctx.state.user)
+const userFromContext = (ctx: MyContext): O.Option<User> => pipe(
+  O.fromNullable(ctx.state.user),
+  O.map(
+    (u) => ({
+      id: u,
+      name: 'erkannt',
+    }))
 )
 
+type User = {
+  id: string,
+  name: string
+}
 
 type Homepage = {
-  user: string
-  loginToggle: string
+  loggedInUser: O.Option<User>
 }
 
 export const homepage = (ctx: MyContext): string => (
   pipe(
     {
-      user: 'erkannt',
-      loginToggle: pipe(ctx, loggedInUser, renderLogin)
+      loggedInUser: userFromContext(ctx)
     },
-    (e: Homepage) => `
+    (m: Homepage) => `
       <h1>Whetstone</h1>
-      ${e.user}
-      ${e.loginToggle}
+      ${renderUser(m.loggedInUser)}
+      ${renderLogin(m.loggedInUser)}
       `
   )
 )
