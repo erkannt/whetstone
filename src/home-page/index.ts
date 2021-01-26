@@ -3,6 +3,7 @@ import { pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
 import { renderLogin } from './render-login'
 import { renderUser } from './render-user'
+import * as T from 'fp-ts/lib/Task'
 
 const userFromContext = (ctx: MyContext): O.Option<User> => pipe(
   O.fromNullable(ctx.state.user),
@@ -22,7 +23,7 @@ type Homepage = {
   loggedInUser: O.Option<User>
 }
 
-export const homepage = (ctx: MyContext): string => (
+export const homepage = (ctx: MyContext): T.Task<string> => (
   pipe(
     {
       loggedInUser: userFromContext(ctx)
@@ -31,6 +32,7 @@ export const homepage = (ctx: MyContext): string => (
       <h1>Whetstone</h1>
       ${renderUser(m.loggedInUser)}
       ${renderLogin(m.loggedInUser)}
-      `
+      `,
+    T.of,
   )
 )
