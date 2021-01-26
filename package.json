@@ -28,7 +28,7 @@
     "passport-github2": "^0.1.12"
   },
   "scripts": {
-    "start": "ts-node-dev --watch src ./src/index.ts",
+    "start": "ts-node-dev --transpile-only --watch src ./src/index.ts",
     "clean": "rm -r node_modules build",
     "lint": "eslint . --max-warnings=0",
     "fix": "eslint . --fix",
