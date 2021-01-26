@@ -13,13 +13,16 @@ const currentUserDisplay = (user: O.Option<string>): string => pipe(
   user,
   O.fold(
     constant(''),
-    (u) => `${u}`,
+    constant(`
+      <img src="https://avatars.githubusercontent.com/u/19282025?s=100">
+      erkannt
+    `)
   )
 )
 
 type Fragments = {
   login: string,
-  username: string,
+  user: string
 }
 
 export type Navbar = {
@@ -29,12 +32,11 @@ export type Navbar = {
 export const renderNavbar = (model: Navbar): string => pipe(
   {
     login: authLink(model.user),
-    username: currentUserDisplay(model.user),
+    user: currentUserDisplay(model.user),
   },
   (e: Fragments) => `
       <nav>
-        <img src="https://avatars.githubusercontent.com/u/19282025?s=100">
-        erkannt
+        ${e.user}
         ${e.login}
       </nav
         `
