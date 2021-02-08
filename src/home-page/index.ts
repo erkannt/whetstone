@@ -7,13 +7,26 @@ import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
 import * as E from 'fp-ts/lib/Either'
 import { sequenceS } from 'fp-ts/lib/Apply'
+import axios, { AxiosResponse } from 'axios'
+
+const httpGet = (url: string) => TE.tryCatch<Error, AxiosResponse>(
+  () => axios.get(url),
+  reason => new Error(String(reason))
+)
+
+const fetchUsername = (id: string): TE.TaskEither<Error, string> => pipe(
+  httpGet(`https://api.github.com/user/${id}`),
+  TE.map((r) => r.data),
+  TE.map((d) => d.login)
+)
 
 const constructUser = (id: string): TE.TaskEither<string, User> => pipe(
   {
     id: TE.right(id),
-    name: TE.right('erkannt'),
+    name: fetchUsername(id)
   },
-  sequenceS(TE.taskEither)
+  sequenceS(TE.taskEither),
+  TE.mapLeft(constant('cant-determine-username'))
 )
 
 const userFromContext = (ctx: MyContext): TE.TaskEither<string, User> => pipe(
