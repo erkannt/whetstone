@@ -8,15 +8,18 @@ import * as TE from 'fp-ts/lib/TaskEither'
 import * as E from 'fp-ts/lib/Either'
 import { sequenceS } from 'fp-ts/lib/Apply'
 
+const constructUser = (id: string): TE.TaskEither<string, User> => pipe(
+  {
+    id: TE.right(id),
+    name: TE.right('erkannt'),
+  },
+  sequenceS(TE.taskEither)
+)
 
 const userFromContext = (ctx: MyContext): TE.TaskEither<string, User> => pipe(
   O.fromNullable(ctx.state.user),
   TE.fromOption(constant('not-logged-in')),
-  TE.map(
-    (u) => ({
-      id: u,
-      name: 'erkannt',
-    }))
+  TE.chain(constructUser)
 )
 
 type User = {
