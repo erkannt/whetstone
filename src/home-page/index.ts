@@ -1,92 +1,92 @@
 import * as O from 'fp-ts/lib/Option'
-import { constant, pipe } from 'fp-ts/lib/function'
+import { constant, flow, pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
-import * as E from 'fp-ts/lib/Either'
-import * as A from 'fp-ts/lib/Array'
 import { sequenceS } from 'fp-ts/lib/Apply'
-import { httpGet } from '../infra/http-get'
 
 
-type User = {
-  id: string,
-  name: string
+// NAVBAR
+
+type DisplayUser = {
+  name: string,
+  avatarUrl: string
 }
 
-const fetchUsername = (id: string): TE.TaskEither<Error, string> => pipe(
-  httpGet(`https://api.github.com/user/${id}`),
-  TE.map((r) => r.data),
-  TE.map((d) => d.login)
-)
+const onlyLogin = '<a href="/login">Login<a>'
 
-const constructUser = (id: string): TE.TaskEither<string, User> => pipe(
-  {
-    id: TE.right(id),
-    name: fetchUsername(id)
-  },
-  sequenceS(TE.taskEither),
-  TE.mapLeft(constant('cant-determine-username'))
-)
+const onlyLogout = '<a href="/logout">Logout<a>'
 
-const userFromContext = (ctx: MyContext): TE.TaskEither<string, User> => pipe(
-  O.fromNullable(ctx.state.user),
-  TE.fromOption(constant('not-logged-in')),
-  TE.chain(constructUser)
-)
+const userAndLogout = (user: DisplayUser) => `
+  <img src="${user.avatarUrl}">
+  ${user.name}
+  ${onlyLogout}
+`
 
-
-// VIEW
-
-const renderLogin = (user: E.Either<unknown, unknown>): string => pipe(
-  user,
-  E.fold(
-    constant('<a href="/login">Login<a>'),
-    constant('<a href="/logout">Logout<a>')
+const fetchDisplayableUser = (id: string): TE.TaskEither<string, DisplayUser> => (
+  TE.right(
+    {
+      name: 'no name',
+      avatarUrl: 'bad url'
+    }
   )
 )
 
-const renderUser = (user: E.Either<string, User>): string => pipe(
-  user,
-  E.fold(
-    constant(''),
-    ((u) => (`
-      <img src="https://avatars.githubusercontent.com/u/${u.id}?s=100">
-      ${u.name}
-    `))
-  )
+const navbar = (userId: O.Option<string>): Component => pipe(
+  userId,
+  TE.fromOption(constant(onlyLogin)),
+  TE.chain(flow(
+    fetchDisplayableUser,
+    TE.mapLeft(constant(onlyLogout))
+  )),
+  TE.map(
+    userAndLogout
+  ),
+  TE.fold(T.of, T.of)
 )
 
-const renderOrgs = (orgs: Array<string>): string => `
+// ORGS
+
+const orgsList = `
+  <h2>Your Orgs</h2>
   <ul>
-    ${A.map((o) => `<li>${o}</li>`)(orgs)}
+    <li>foo</li>
   </ul>
 `
 
+const fetchOrgs = (id: string) => TE.right(
+  ['foo']
+)
+const yourOrgs = (userId: O.Option<string>): Component => pipe(
+  userId,
+  TE.fromOption(constant('Log in to see your orgs')),
+  TE.chainW(fetchOrgs),
+  TE.bimap(
+    constant('Sorry. I can\'t find your orgs'),
+    constant(orgsList)
+  ),
+  TE.fold(T.of, T.of)
+)
+
 // MAIN
 
-type Homepage = {
-  user: E.Either<string, User>,
-  orgs: Array<string>
-}
+type Component = T.Task<string>
 
-export const homepage = (ctx: MyContext): T.Task<string> => (
-  pipe(
-    {
-      user: userFromContext(ctx),
-      orgs: T.of(['foobar'])
-    },
-    sequenceS(T.task),
-    T.map(
-      (m: Homepage) => `
+export const homepage = (ctx: MyContext): T.Task<string> => pipe(
+  ctx.state.user,
+  O.fromNullable,
+  (u) => ({
+    navbar: navbar(u),
+    orgs: yourOrgs(u)
+  }),
+  sequenceS(T.task),
+  T.map(
+    (m) => `
         <h1>Whetstone</h1>
-        ${renderUser(m.user)}
-        ${renderLogin(m.user)}
+        ${m.navbar}
         <main>
-          <h2>Your orgs</h2>
-          ${renderOrgs(m.orgs)}
+          ${m.orgs}
         </main>
         `,
-    )
   )
 )
