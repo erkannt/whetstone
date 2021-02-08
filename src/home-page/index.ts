@@ -1,30 +1,16 @@
 import * as O from 'fp-ts/lib/Option'
-import { constant, flow, pipe } from 'fp-ts/lib/function'
+import { constant, pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
 import * as E from 'fp-ts/lib/Either'
 import * as A from 'fp-ts/lib/Array'
 import { sequenceS } from 'fp-ts/lib/Apply'
-import axios, { AxiosResponse } from 'axios'
 
-// MISC
-
-const httpGet = (url: string) => TE.tryCatch<Error, AxiosResponse>(
-  () => axios.get(url),
-  reason => new Error(String(reason))
-)
-
-// MODEL
 
 type User = {
   id: string,
   name: string
-}
-
-type Homepage = {
-  user: E.Either<string, User>,
-  orgs: Array<string>
 }
 
 const fetchUsername = (id: string): TE.TaskEither<Error, string> => pipe(
@@ -77,6 +63,11 @@ const renderOrgs = (orgs: Array<string>): string => `
 `
 
 // MAIN
+
+type Homepage = {
+  user: E.Either<string, User>,
+  orgs: Array<string>
+}
 
 export const homepage = (ctx: MyContext): T.Task<string> => (
   pipe(
