@@ -1,8 +1,6 @@
 import * as O from 'fp-ts/lib/Option'
 import { constant, pipe } from 'fp-ts/lib/function'
 import { MyContext } from '../context'
-import { renderLogin } from './render-login'
-import { renderUser } from './render-user'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
 import * as E from 'fp-ts/lib/Either'
@@ -57,5 +55,24 @@ export const homepage = (ctx: MyContext): T.Task<string> => (
         ${renderLogin(m.user)}
         `,
     )
+  )
+)
+
+const renderLogin = (user: E.Either<unknown, unknown>): string => pipe(
+  user,
+  E.fold(
+    constant('<a href="/login">Login<a>'),
+    constant('<a href="/logout">Logout<a>')
+  )
+)
+
+const renderUser = (user: E.Either<string, User>): string => pipe(
+  user,
+  E.fold(
+    constant(''),
+    ((u) => (`
+      <img src="https://avatars.githubusercontent.com/u/${u.id}?s=100">
+      ${u.name}
+    `))
   )
 )
