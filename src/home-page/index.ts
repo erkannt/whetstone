@@ -38,7 +38,7 @@ const fetchOrgs = (id: string) => TE.right(
   ['sciety', 'elife']
 )
 
-const yourOrgs = (userId: O.Option<string>): Component => pipe(
+const orgs = (userId: O.Option<string>): Component => pipe(
   userId,
   TE.fromOption(() => logInCallToAction),
   TE.chain(flow(
@@ -58,7 +58,7 @@ export const homepage = (ctx: MyContext): T.Task<string> => pipe(
   O.fromNullable,
   (u) => ({
     navbar: navbar(u),
-    orgs: yourOrgs(u)
+    orgs: orgs(u)
   }),
   sequenceS(T.task),
   T.map(
