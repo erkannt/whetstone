@@ -4,24 +4,11 @@ import { MyContext } from '../context'
 import * as T from 'fp-ts/lib/Task'
 import * as TE from 'fp-ts/lib/TaskEither'
 import { sequenceS } from 'fp-ts/lib/Apply'
+import { DisplayUser, onlyLogin, onlyLogout, userAndLogout } from './render-navbar'
+import { errorMsg, logInCallToAction, orgsList } from './render-orgs'
 
 
 // NAVBAR
-
-type DisplayUser = {
-  name: string,
-  avatarUrl: string
-}
-
-const onlyLogin = '<a href="/login">Login<a>'
-
-const onlyLogout = '<a href="/logout">Logout<a>'
-
-const userAndLogout = (user: DisplayUser) => `
-  <img src="${user.avatarUrl}">
-  ${user.name}
-  ${onlyLogout}
-`
 
 const fetchDisplayableUser = (id: string): TE.TaskEither<string, DisplayUser> => (
   TE.right(
@@ -47,22 +34,16 @@ const navbar = (userId: O.Option<string>): Component => pipe(
 
 // ORGS
 
-const orgsList = `
-  <h2>Your Orgs</h2>
-  <ul>
-    <li>foo</li>
-  </ul>
-`
-
 const fetchOrgs = (id: string) => TE.right(
   ['foo']
 )
+
 const yourOrgs = (userId: O.Option<string>): Component => pipe(
   userId,
-  TE.fromOption(constant('Log in to see your orgs')),
+  TE.fromOption(() => logInCallToAction),
   TE.chainW(fetchOrgs),
   TE.bimap(
-    constant('Sorry. I can\'t find your orgs'),
+    constant(errorMsg),
     constant(orgsList)
   ),
   TE.fold(T.of, T.of)
