@@ -6,6 +6,7 @@ import * as TE from 'fp-ts/lib/TaskEither'
 import * as E from 'fp-ts/lib/Either'
 import * as A from 'fp-ts/lib/Array'
 import { sequenceS } from 'fp-ts/lib/Apply'
+import { httpGet } from '../infra/http-get'
 
 
 type User = {
