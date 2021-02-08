@@ -41,11 +41,11 @@ const fetchOrgs = (id: string) => TE.right(
 const yourOrgs = (userId: O.Option<string>): Component => pipe(
   userId,
   TE.fromOption(() => logInCallToAction),
-  TE.chainW(fetchOrgs),
-  TE.bimap(
-    constant(errorMsg),
-    constant(orgsList)
-  ),
+  TE.chain(flow(
+    fetchOrgs,
+    TE.mapLeft(() => errorMsg)
+  )),
+  TE.map(orgsList),
   TE.fold(T.of, T.of)
 )
 
