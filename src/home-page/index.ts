@@ -13,8 +13,8 @@ import { errorMsg, logInCallToAction, orgsList } from './render-orgs'
 const fetchDisplayableUser = (id: string): TE.TaskEither<string, DisplayUser> => (
   TE.right(
     {
-      name: 'no name',
-      avatarUrl: 'bad url'
+      name: 'erkannt',
+      avatarUrl: 'https://avatars.githubusercontent.com/u/19282025?v=4'
     }
   )
 )
@@ -35,7 +35,7 @@ const navbar = (userId: O.Option<string>): Component => pipe(
 // ORGS
 
 const fetchOrgs = (id: string) => TE.right(
-  ['foo']
+  ['sciety', 'elife']
 )
 
 const yourOrgs = (userId: O.Option<string>): Component => pipe(

@@ -8,7 +8,7 @@ export type DisplayUser = {
 }
 
 export const userAndLogout = (user: DisplayUser):string => `
-  <img src="${user.avatarUrl}">
+  <img src="${user.avatarUrl}" style="height:50px; width:50px">
   ${user.name}
   ${onlyLogout}
 `
