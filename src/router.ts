@@ -30,6 +30,23 @@ export const router = (): Router<DefaultState, Context> => {
     }
   )
 
+  let broken = false
+  router.get('/breakingping',
+    async (context, next) => {
+      if (broken) {
+        console.log('404')
+        context.status = 404
+        broken = false
+      } else {
+        broken = true
+        console.log('pong')
+        context.body = 'pong'
+        context.status = 200
+      }
+      await next()
+    }
+  )
+
   return router
 
 }
