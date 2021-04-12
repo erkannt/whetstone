@@ -1,22 +1,33 @@
 import { httpGet } from './src/infra/http-get'
-import * as IO from 'fp-ts/IO'
 import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
+import * as E from 'fp-ts/Either'
 import * as T from 'fp-ts/Task'
 import { pipe } from 'fp-ts/function'
 
-export function memoize<A>(ma: (key: string) => IO.IO<A>): (key: string) => IO.IO<A> {
+export function cacheTaskEither<E, A>(ma: (key: string) => TE.TaskEither<E, A>): (key: string) =>  TE.TaskEither<E, A> {
   const cache: Record<string, A> = {}
-  const addToCache = (key: string) => () => {
-    cache[key] = ma(key)()
-    return cache[key]
+
+  const passthroughCache = (key: string) => (value: A) => {
+    cache[key] = value
+    return value
   }
 
-  return (key: string) => pipe(
+  const fetchAndCacheIfRight = (key: string) => async () => {
+    const result = await ma(key)()
+    return pipe(
+      result,
+      E.map(passthroughCache(key))
+    )
+  }
+
+  return (key: string) => () => pipe(
     cache[key],
     O.fromNullable,
-    O.getOrElse(addToCache(key)),
-    IO.of,
+    O.fold(
+      fetchAndCacheIfRight(key),
+      async (a) => E.right(a)
+    )
   )
 }
 
@@ -34,35 +45,26 @@ const render = (model: TE.TaskEither<string, string>): T.Task<string> => pipe(
   )
 )
 
-const multiFoo = pipe(
+const vanilla = pipe(
   T.Do,
   T.apS('a', pipe(ping('foo'), render)),
   T.apS('b', pipe(ping('foo'), render)),
 )
 
+const pingC = cacheTaskEither(ping)
 
-const pingM = memoize(ping)
-
-const multiFooM = pipe(
+const cached = pipe(
   T.Do,
-  T.apS('a', pipe(pingM('foo'), render)),
-  T.apS('b', pipe(pingM('foo'), render)),
-  T.apS('c', pipe(pingM('foo'), render)),
+  T.apS('a', pipe(pingC('foo'), render)),
+  T.apS('b', pipe(pingC('foo'), render)),
+  T.apS('c', pipe(pingC('foo'), render)),
 )
-
-const multiFooM2 = pipe(
-  T.Do,
-  T.apS('a', pipe(pingM('foo'), render)),
-  T.apS('b', pipe(pingM('foo'), render)),
-  T.apS('c', pipe(pingM('foo'), render)),
-)
-
 
 void (async (): Promise<void> => {
   console.time('plain')
-  console.timeLog('plain', await multiFoo())
-  console.time('memoized')
-  console.timeLog('memoized', await multiFooM())
-  console.time('memoized2')
-  console.timeLog('memoized2', await multiFooM2())
+  console.timeLog('plain', await vanilla())
+  console.time('cached1')
+  console.timeLog('cached1', await cached())
+  console.time('cached2')
+  console.timeLog('cached2', await cached())
 })()
