@@ -58,6 +58,9 @@ const cached = pipe(
     a: pipe(pingC('foo'), render),
     b: pipe(pingC('foo'), render),
     c: pipe(pingC('foo'), render),
+    d: pipe(pingC('foo'), render),
+    e: pipe(pingC('foo'), render),
+    f: pipe(pingC('foo'), render),
   },
   sequenceS(T.task)
 )
