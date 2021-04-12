@@ -4,6 +4,7 @@ import * as TE from 'fp-ts/TaskEither'
 import * as E from 'fp-ts/Either'
 import * as T from 'fp-ts/Task'
 import { pipe } from 'fp-ts/function'
+import { sequenceS } from 'fp-ts/lib/Apply'
 
 export function cacheTaskEither<E, A>(ma: (key: string) => TE.TaskEither<E, A>): (key: string) =>  TE.TaskEither<E, A> {
   const cache: Record<string, A> = {}
@@ -46,18 +47,22 @@ const render = (model: TE.TaskEither<string, string>): T.Task<string> => pipe(
 )
 
 const vanilla = pipe(
-  T.Do,
-  T.apS('a', pipe(ping('foo'), render)),
-  T.apS('b', pipe(ping('foo'), render)),
+  {
+    a: pipe(ping('foo'), render),
+    b: pipe(ping('foo'), render),
+  },
+  sequenceS(T.task)
 )
 
 const pingC = cacheTaskEither(ping)
 
 const cached = pipe(
-  T.Do,
-  T.apS('a', pipe(pingC('foo'), render)),
-  T.apS('b', pipe(pingC('foo'), render)),
-  T.apS('c', pipe(pingC('foo'), render)),
+  {
+    a: pipe(pingC('foo'), render),
+    b: pipe(pingC('foo'), render),
+    c: pipe(pingC('foo'), render),
+  },
+  sequenceS(T.task)
 )
 
 void (async (): Promise<void> => {
