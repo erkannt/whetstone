@@ -9,24 +9,21 @@ import { sequenceS } from 'fp-ts/lib/Apply'
 export function cacheTaskEither<E, A>(ma: (key: string) => TE.TaskEither<E, A>): (key: string) =>  TE.TaskEither<E, A> {
   const cache: Record<string, A> = {}
 
-  const passthroughCache = (key: string) => (value: A) => {
+  const cacheAndPassOn = (key: string) => (value: A) => {
     cache[key] = value
     return value
   }
 
-  const fetchAndCacheIfRight = (key: string) => async () => {
-    const result = await ma(key)()
-    return pipe(
-      result,
-      E.map(passthroughCache(key))
-    )
-  }
+  const fetchAndCacheIfSuccessful = (key: string) => async () => pipe(
+    await ma(key)(),
+    E.map(cacheAndPassOn(key))
+  )
 
   return (key: string) => () => pipe(
     cache[key],
     O.fromNullable,
     O.fold(
-      fetchAndCacheIfRight(key),
+      fetchAndCacheIfSuccessful(key),
       async (a) => E.right(a)
     )
   )
