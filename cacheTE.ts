@@ -3,10 +3,10 @@ import * as O from 'fp-ts/Option'
 import * as TE from 'fp-ts/TaskEither'
 import * as E from 'fp-ts/Either'
 import * as T from 'fp-ts/Task'
-import { pipe } from 'fp-ts/function'
+import { identity, pipe } from 'fp-ts/function'
 import { sequenceS } from 'fp-ts/lib/Apply'
 
-export function cacheTaskEither<E, A>(ma: (key: string) => TE.TaskEither<E, A>): (key: string) =>  TE.TaskEither<E, A> {
+const cacheTaskEither = <E, A>(ma: (key: string) => TE.TaskEither<E, A>): (key: string) =>  TE.TaskEither<E, A> => {
   const cache: Record<string, A> = {}
 
   const cacheAndPassOn = (key: string) => (value: A) => {
@@ -37,10 +37,10 @@ const ping = (msg: string) => pipe(
 
 const render = (model: TE.TaskEither<string, string>): T.Task<string> => pipe(
   model,
-  TE.fold(
-    (e) => T.of(e),
-    (a) => T.of(a),
-  )
+  T.map(E.fold(
+    identity,
+    identity,
+  ))
 )
 
 const vanilla = pipe(
